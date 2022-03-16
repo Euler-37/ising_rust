@@ -8,7 +8,8 @@ const SITE:usize = N * N;
 const STEP:usize = 100000;
 const HEAT:usize = 1000;
 
-fn update(spin : &mut [i32;SITE],nbr :&[[usize;4];SITE],t:f64 ) {
+
+fn update(spin : &mut [i32;SITE],nbr :&[[usize;4];SITE],t:f64) {
     let mut rng = rand::thread_rng();
     for _i in 0..SITE{
         let r:usize = rng.gen_range(0..SITE);
@@ -20,9 +21,7 @@ fn update(spin : &mut [i32;SITE],nbr :&[[usize;4];SITE],t:f64 ) {
     }
 }
 
-fn main() {
-    let tic = SystemTime::now();
-    let mut spin:[i32;SITE]=[1;SITE];
+fn generate_nbr() -> [[usize;4];SITE] {
     //let mut nbr:Vec<[usize;4]> =Vec::new();
     //for i in 0..N {
     //    for j in 0..N{
@@ -35,6 +34,13 @@ fn main() {
             nbr[i*N+j]=[((i+1)%N)*N+j,((N-1+i)%N)*N+j,i*N+(j+1)%N,i*N+(N-1+j)%N];
         }
     }
+    nbr
+}
+
+fn main() {
+    let tic = SystemTime::now();
+    let mut spin:[i32;SITE]=[1;SITE];
+    let nbr=generate_nbr();
     let mut file=std::fs::File::create("1.txt").unwrap();
     for j in 0..M{
         let t:f64 = (j+1) as f64 * 0.1f64;
