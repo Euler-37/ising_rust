@@ -23,7 +23,6 @@ fn update(spin : &mut [i32;SITE],nbr :&[[usize;4];SITE],t:f64 ) {
 fn main() {
     let tic = SystemTime::now();
     let mut spin:[i32;SITE]=[1;SITE];
-    let mut mag:Vec<f64> = Vec::new();
     //let mut nbr:Vec<[usize;4]> =Vec::new();
     //for i in 0..N {
     //    for j in 0..N{
@@ -36,6 +35,7 @@ fn main() {
             nbr[i*N+j]=[((i+1)%N)*N+j,((N-1+i)%N)*N+j,i*N+(j+1)%N,i*N+(N-1+j)%N];
         }
     }
+    let mut file=std::fs::File::create("1.txt").unwrap();
     for j in 0..M{
         let t:f64 = (j+1) as f64 * 0.1f64;
         for _i in 0..HEAT {
@@ -51,13 +51,9 @@ fn main() {
             mag_t += sum.abs() as f64;
         }
         mag_t /= (STEP*SITE) as f64;
-        mag.push(mag_t);
+        // write mag in file 1.txt
+        file.write_all(format!("{:.4} {:.4}\n",t,mag_t).as_bytes()).unwrap();
 
-    }
-    // write mag in file 1.txt
-    let mut file=std::fs::File::create("1.txt").unwrap();
-    for (i,it) in mag.iter().enumerate(){
-        file.write_all(format!("{} {}\n",i,it).as_bytes()).unwrap();
     }
     let toc= SystemTime::now();
     println!("{:?}",toc.duration_since(tic).unwrap());
