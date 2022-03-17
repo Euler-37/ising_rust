@@ -1,4 +1,5 @@
 use rand::Rng;
+use rand::rngs::ThreadRng;
 use std::io::Write;
 use std::time::SystemTime;
 
@@ -9,8 +10,7 @@ const STEP:usize = 100000;
 const HEAT:usize = 1000;
 
 
-fn update(spin : &mut [i32;SITE],nbr :&[[usize;4];SITE],t:f64) {
-    let mut rng = rand::thread_rng();
+fn update(rng: &mut ThreadRng,spin : &mut [i32;SITE],nbr :&[[usize;4];SITE],t:f64) {
     for _i in 0..SITE{
         let r:usize = rng.gen_range(0..SITE);
         let s = spin[r] as f64;
@@ -39,17 +39,18 @@ fn generate_nbr() -> [[usize;4];SITE] {
 
 fn main() {
     let tic = SystemTime::now();
-    let mut spin:[i32;SITE]=[1;SITE];
     let nbr=generate_nbr();
+    let mut spin:[i32;SITE]=[1;SITE];
     let mut file=std::fs::File::create("1.txt").unwrap();
+    let mut rng = rand::thread_rng();
     for j in 0..M{
         let t:f64 = (j+1) as f64 * 0.1f64;
         for _i in 0..HEAT {
-            update(&mut spin,&nbr,t);
+            update(&mut rng,&mut spin,&nbr,t);
         }
         let mut mag_t:f64 = 0.0;
         for _i in 0..STEP{
-            update(&mut spin,&nbr,t);
+            update(&mut rng,&mut spin,&nbr,t);
             let sum = spin.iter().sum::<i32>() as f64;
             mag_t += sum.abs();
         }
